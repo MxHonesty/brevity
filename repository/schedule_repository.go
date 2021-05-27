@@ -3,47 +3,70 @@ package repository
 import (
 	"brevity/task"
 	"errors"
+	"github.com/emirpasic/gods/lists/arraylist"
 )
 
 type ScheduleRepository struct {
-	elements []task.Scheduable
+	elements arraylist.List
 }
 
 // Creates an empty ScheduleRepository
 func NewScheduleRepository() ScheduleRepository {
-	return ScheduleRepository{[]task.Scheduable{}}
+	return ScheduleRepository{elements: *arraylist.New()}
 }
 
-func (repo *ScheduleRepository) Retrieve(id uint64) (*task.Scheduable, error) {
-	for i, el := range repo.elements {
-		if el.GetId() == id {
-			return &repo.elements[i], nil // Return pointer to element
-		}
+func (repo *ScheduleRepository) Retrieve(id uint64) (task.Scheduable, error) {
+	index, el := repo.elements.Find(func(index int, value interface{}) bool {
+		corValue := value.(task.Scheduable)
+		return corValue.GetId() == id
+	})
+	if index == -1 { // Not Found
+		return nil, errors.New("element with id not found")
+	} else {
+		return el.(task.Scheduable), nil
 	}
-	return nil, errors.New("no element with id found")
 }
 
 // Adds the Scheduable item to the repository.
 func (repo *ScheduleRepository) Add(scheduable task.Scheduable) {
-	repo.elements = append(repo.elements, scheduable)  // Adds copy of element to list
+	copyVal := scheduable.Copy()
+	repo.elements.Add(copyVal) // Adds copy of element to list
 }
 
 // Returns true if the item with the given id is found.
 func (repo *ScheduleRepository) Find(id uint64) bool {
-	for _, el := range repo.elements {
-		if el.GetId() == id {
-			return true
-		}
-	}
-	return false
+	index, _ := repo.elements.Find(func(index int, value interface{}) bool {
+		corValue := value.(task.Scheduable)
+		return corValue.GetId() == id
+	})
+
+	return index != -1
 }
 
 // Removes all the elements.
 func (repo *ScheduleRepository) RemoveAll() {
-	repo.elements = nil
+	repo.elements.Clear()
 }
 
-// Returns the array of elements.
-func (repo *ScheduleRepository) GetAll() []task.Scheduable {
+// Returns a copy of the elements
+func (repo *ScheduleRepository) GetAll() arraylist.List {
 	return repo.elements
+}
+
+func (repo *ScheduleRepository) Remove(id uint64) error {
+	index, _ := repo.elements.Find(func (index int, value interface{}) bool {
+		corValue := value.(task.Scheduable)
+		return corValue.GetId() == id
+	})
+
+	if index == -1 {
+		return errors.New("element not found")
+	} else {
+		repo.elements.Remove(index)
+	}
+	return nil
+}
+
+func (repo *ScheduleRepository) Size() int {
+	return repo.elements.Size()
 }

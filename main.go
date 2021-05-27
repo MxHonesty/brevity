@@ -1,8 +1,6 @@
 package main
 
-import (
-	"brevity/ui"
-)
+import "brevity/ui"
 
 func main() {
 	ui.CreateUI()
