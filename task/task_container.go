@@ -56,12 +56,26 @@ func (c *Container) GetEndTime() time.Time {
 	return c.end
 }
 
-// Return the slice of Task instances appended to this
-// Container.
+// Return a copy of the slice of Task instances
+// appended to this Container.
 func (c *Container) GetTasks() []Task {
-	return c.tasks
+	temp := make([]Task, len(c.tasks))
+	copy(temp, c.tasks)
+	return temp
 }
 
 func (c *Container) SetTasks(newTasks []Task) {
-	c.tasks = newTasks
+	temp := make([]Task, len(newTasks))  // Copy elements of the slice passed
+	copy(temp, newTasks)
+	c.tasks = temp
+}
+
+// Set the start time as a time.Time.
+func (c *Container) SetStartTime(newStart time.Time) {
+	c.start = newStart
+}
+
+// Set the end time of the Container as a time.Time.
+func (c *Container) SetEndTime(newEnd time.Time) {
+	c.end = newEnd
 }

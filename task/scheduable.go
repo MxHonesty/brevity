@@ -12,6 +12,8 @@ type Scheduable interface {
 	GetDuration() time.Duration
 	GetStartTime() time.Time
 	GetEndTime() time.Time
+	SetStartTime(newStart time.Time)
+	SetEndTime(newEnd time.Time)
 	GetTasks() []Task  // Get the tasks of this item.
 	SetTasks(newTasks []Task)
 	Copy() Scheduable
