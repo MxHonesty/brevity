@@ -5,13 +5,6 @@ import (
 	"time"
 )
 
-// De testat
-// Copy
-// Getters
-// Setters
-// Get Tasks
-// SetTasks
-
 // Test case for the Copy interface operation.
 func TestCopyContainer(t *testing.T) {
 	tm := time.Now()
@@ -40,6 +33,7 @@ func TestCopyContainer(t *testing.T) {
 	}
 }
 
+// Test case for Setters.
 func TestSettersContainer(t *testing.T) {
 	tm := time.Now()
 	newTm := tm.Add(10)
@@ -56,6 +50,7 @@ func TestSettersContainer(t *testing.T) {
 	}
 }
 
+// Test case for immutability of Container task.Task.
 func TestTasksContainer(t *testing.T) {
 	a := NewContainer(0, time.Now(), time.Now())
 	tsk1 := NewTask("A", "A")

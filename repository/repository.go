@@ -14,5 +14,5 @@ type Repository interface {
 	Find(id uint64) bool
 	RemoveAll()
 	GetAll() arraylist.List
-	Size() uint64
+	Size() int
 }

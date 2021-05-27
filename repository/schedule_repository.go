@@ -11,8 +11,8 @@ type ScheduleRepository struct {
 }
 
 // Creates an empty ScheduleRepository
-func NewScheduleRepository() ScheduleRepository {
-	return ScheduleRepository{elements: *arraylist.New()}
+func NewScheduleRepository() *ScheduleRepository {
+	return &ScheduleRepository{elements: *arraylist.New()}
 }
 
 func (repo *ScheduleRepository) Retrieve(id uint64) (task.Scheduable, error) {
