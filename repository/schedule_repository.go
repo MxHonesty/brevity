@@ -70,3 +70,21 @@ func (repo *ScheduleRepository) Remove(id uint64) error {
 func (repo *ScheduleRepository) Size() int {
 	return repo.elements.Size()
 }
+
+func (repo *ScheduleRepository) Update(id uint64, newItem task.Scheduable) error {
+	index, el := repo.elements.Find(func(index int, value interface{}) bool {
+		corValue := value.(task.Scheduable)
+		return corValue.GetId() == id
+	})
+
+	if index == -1 {
+		return errors.New("element not found")
+	} else {
+		element := el.(task.Scheduable)
+		element.SetTasks(newItem.GetTasks())
+		element.SetStartTime(newItem.GetStartTime())
+		element.SetEndTime(newItem.GetEndTime())
+		repo.elements.Set(index, element)
+		return nil
+	}
+}

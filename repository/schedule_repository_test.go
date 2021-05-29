@@ -169,3 +169,48 @@ func TestAddByValueScheduleRepository(t *testing.T) {
 		t.Error("The value inside the repo was updated.")
 	}
 }
+
+func TestUpdateScheduleRepository(t *testing.T) {
+	repo := NewScheduleRepository()
+	now1 := time.Now()
+	now2 := now1.Add(1)
+	now3 := now2.Add(1)
+	a := task.NewContainer(0, now1, now1)
+	b := task.NewContainer(1, now2, now2)
+	c := task.NewContainer(2, now3, now3)
+
+	repo.Add(a)
+	repo.Add(b)
+
+	err := repo.Update(1, c)  // We expect id to stay 1, but times to be now3
+	if err != nil {
+		t.Error("Expected not error, but got")
+	}
+
+	el, err2 := repo.Retrieve(1)
+	if err2 != nil {
+		t.Error("Did not find existing item")
+	} else {
+		if el.GetStartTime() != now3 && el.GetEndTime() != now3 {
+			t.Error("Times did not update")
+		}
+	}
+}
+
+func TestUpdateNonExistingScheduleRepository(t *testing.T) {
+	repo := NewScheduleRepository()
+	now1 := time.Now()
+	now2 := now1.Add(1)
+	now3 := now2.Add(1)
+	a := task.NewContainer(0, now1, now1)
+	b := task.NewContainer(1, now2, now2)
+	c := task.NewContainer(2, now3, now3)
+
+	repo.Add(a)
+	repo.Add(b)
+
+	err := repo.Update(10, c)
+	if err == nil {
+		t.Error("Updated non existent item")
+	}
+}

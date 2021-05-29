@@ -157,3 +157,20 @@ func TestUpdateNotExistingDepRepository(t *testing.T) {
 		t.Error("Expected error, got none.")
 	}
 }
+
+func TestDeleteNonExisting(t *testing.T) {
+	repo := NewDepRepository()
+
+	dep1 := dependency.NewDependency([]task.Task{task.NewTask("A", "A")},
+		task.NewTask("A", "A"), 0)
+	dep2 := dependency.NewDependency([]task.Task{task.NewTask("A", "A")},
+		task.NewTask("B", "B"), 1)
+
+	repo.Add(dep1)
+	repo.Add(dep2)
+
+	err := repo.Remove(10)  // Remove non existent
+	if err == nil {
+		t.Error("Deleted non existent item")
+	}
+}
