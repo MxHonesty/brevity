@@ -49,8 +49,8 @@ func (repo *ScheduleRepository) RemoveAll() {
 }
 
 // Returns a copy of the elements
-func (repo *ScheduleRepository) GetAll() arraylist.List {
-	return repo.elements
+func (repo *ScheduleRepository) GetAll() *arraylist.List {
+	return &repo.elements
 }
 
 func (repo *ScheduleRepository) Remove(id uint64) error {

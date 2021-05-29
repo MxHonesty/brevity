@@ -11,7 +11,11 @@ func TestCreateDependency(t *testing.T) {
 	tsk2 := task.NewTask("B", "B")
 	tsk3 := task.NewTask("C", "C")
 
-	dep := NewDependency([]task.Task{tsk1, tsk2}, tsk3)
+	dep := NewDependency([]task.Task{tsk1, tsk2}, tsk3, 0)
+
+	if dep.GetId() != uint64(0) {
+		t.Errorf("Expected 0, got %d", dep.GetId())
+	}
 
 	// Test that the Tasks inside the struct are copies of the
 	// originals.
@@ -35,7 +39,7 @@ func TestCreateDependency(t *testing.T) {
 // are making copies of the tasks.
 func TestSettersDepOnDependency(t *testing.T) {
 	dep := NewDependency([]task.Task{task.NewTask("A", "A")},
-	task.NewTask("C", "C"))
+	task.NewTask("C", "C"), 0)
 
 	newSlice := []task.Task{task.NewTask("AA", "AA"),
 		task.NewTask("BB", "BB")}
@@ -55,7 +59,7 @@ func TestSettersDepOnDependency(t *testing.T) {
 // setter makes a copy of the task.Task
 func TestSetterDepDependency(t *testing.T) {
 	tsk := task.NewTask("A", "A")
-	dep := NewDependency(nil, tsk)
+	dep := NewDependency(nil, tsk, 0)
 
 	tsk.SetDescription("AAA")
 	depTsk := dep.Dependent()

@@ -11,6 +11,7 @@ import "brevity/task"
 type Dependency struct {
 	dependentOn []task.Task
 	dependent task.Task
+	id uint64  // Unique id of this Dependency
 }
 
 // Creates a Dependency with the given tasks.
@@ -18,8 +19,8 @@ type Dependency struct {
 // members is this:
 // dependentOn ---> dependent
 // As an order of execution.
-func NewDependency(dependentOn []task.Task, dependent task.Task) Dependency {
-	return Dependency{dependentOn: dependentOn, dependent: dependent}
+func NewDependency(dependentOn []task.Task, dependent task.Task, id uint64) Dependency {
+	return Dependency{dependentOn: dependentOn, dependent: dependent, id: id}
 }
 
 // Return the dependent task.Task.
@@ -45,4 +46,9 @@ func (d *Dependency) SetDependentOn(dependentOn []task.Task) {
 	temp := make([]task.Task, len(dependentOn))
 	copy(temp, dependentOn)
 	d.dependentOn = temp
+}
+
+// Return the id of the Dependency
+func (d *Dependency) GetId() uint64 {
+	return d.id
 }

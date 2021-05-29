@@ -8,12 +8,12 @@ import (
 )
 
 type ScheduableService struct {
-	repo      repository.Repository
+	repo      repository.TaskRepository
 	currentId uint64
 }
 
 // Creates a service for the given repository.
-func NewScheduableService(rep repository.Repository) *ScheduableService {
+func NewScheduableService(rep repository.TaskRepository) *ScheduableService {
 	srv := ScheduableService{repo: rep, currentId: 0}
 	return &srv
 }
