@@ -53,6 +53,7 @@ func (srv *ScheduableService) PrintContainers() {
 	}
 }
 
+// Returns a slice of copies of the Containers.
 func (srv *ScheduableService) GetAllContainers() []task.Container {
 	vec := srv.repo.GetAll()
 	slc := vec.Values()
