@@ -8,7 +8,7 @@ import (
 
 // Test case for add functionality.
 func TestAddScheduableService(t *testing.T) {
-	srv := NewScheduableService(repository.NewScheduleRepository())
+	srv := NewScheduableService(repository.NewInMemoryRepositoryFactory())
 	srv.AddContainer(0, time.January, 0, 0, 0,
 		0, time.January, 0, 0, 0)
 
@@ -26,7 +26,7 @@ func TestAddScheduableService(t *testing.T) {
 
 // Test case for remove functionality.
 func TestRemoveScheduableService(t *testing.T) {
-	srv := NewScheduableService(repository.NewScheduleRepository())
+	srv := NewScheduableService(repository.NewInMemoryRepositoryFactory())
 	srv.AddContainer(0, time.January, 0, 0, 0,
 		0, time.January, 0, 0, 0)
 

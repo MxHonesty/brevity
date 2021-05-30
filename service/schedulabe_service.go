@@ -12,8 +12,11 @@ type ScheduableService struct {
 	currentId uint64
 }
 
-// Creates a service for the given repository.
-func NewScheduableService(rep repository.TaskRepository) *ScheduableService {
+// Creates a service.
+// Receives a repository.Factory as a parameter.
+// The Constructor uses it as a way to create the needed repositories.
+func NewScheduableService(factory repository.Factory) *ScheduableService {
+	rep := factory.CreateTaskRepository()
 	srv := ScheduableService{repo: rep, currentId: 0}
 	return &srv
 }

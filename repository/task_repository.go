@@ -5,7 +5,7 @@ import (
 	"github.com/emirpasic/gods/lists/arraylist"
 )
 
-// Common interface for all task.Task Repositories
+// Common interface for all task.Scheduable Repositories
 // Responsible for storing the Scheduable date
 type TaskRepository interface {
 	Retrieve(id uint64) (task.Scheduable, error)
