@@ -14,14 +14,19 @@ type Dependency struct {
 	id uint64  // Unique id of this Dependency
 }
 
-// Creates a Dependency with the given tasks.
+// Creates a Dependency with the given task.Scheduable.
 // The relationship being mapped between the two
-// members is this:
+// members is represented as such:
 // dependentOn ---> dependent
 // As an order of execution.
 func NewDependency(dependentOn []task.Scheduable, dependent task.Scheduable,
 	id uint64) Dependency {
-	return Dependency{dependentOn: dependentOn, dependent: dependent, id: id}
+	dependentOnCopy := make([]task.Scheduable, 0)
+	for _, el := range dependentOn {
+		dependentOnCopy = append(dependentOnCopy, el.Copy())
+	}
+
+	return Dependency{dependentOn: dependentOnCopy, dependent: dependent.Copy(), id: id}
 }
 
 // Return the dependent task.Scheduable.
@@ -29,23 +34,24 @@ func (d *Dependency) Dependent() task.Scheduable {
 	return d.dependent
 }
 
-// Sets the dependent task.Scheduable.
+// Sets the dependent task.Scheduable. Creates a copy.
 func (d *Dependency) SetDependent(dependent task.Scheduable) {
-	d.dependent = dependent
+	d.dependent = dependent.Copy()
 }
 
-// Return a copy of the slice of task.Scheduable that is depended on.
+// Return the slice task.Scheduable that is depended on.
+// This does not make a new copy.
 func (d *Dependency) DependentOn() []task.Scheduable {
-	temp := make([]task.Scheduable, len(d.dependentOn))
-	copy(temp, d.dependentOn)
-	return temp
+	return d.dependentOn
 }
 
 // Sets the task.Scheduable that is depended on.
 // The elements are copied.
 func (d *Dependency) SetDependentOn(dependentOn []task.Scheduable) {
-	temp := make([]task.Scheduable, len(dependentOn))
-	copy(temp, dependentOn)
+	temp := make([]task.Scheduable, 0)
+	for _, el := range dependentOn {
+		temp = append(temp, el.Copy())
+	}
 	d.dependentOn = temp
 }
 
@@ -55,9 +61,11 @@ func (d *Dependency) GetId() uint64 {
 }
 
 // Returns a copy of this Dependency.
-func (d *Dependency) Copy() Dependency {
-	sliceCopy := make([]task.Scheduable, len(d.DependentOn()))
-	copy(sliceCopy, d.DependentOn())  // Copied dependent slice.
-	newEl := NewDependency(sliceCopy, d.Dependent(), d.id)
-	return newEl
+func (d *Dependency) Copy() *Dependency {
+	sliceCopy := make([]task.Scheduable, 0)
+	for _, el := range d.dependentOn {
+		sliceCopy = append(sliceCopy, el.Copy())
+	}
+	newEl := NewDependency(sliceCopy, d.Dependent().Copy(), d.id)
+	return &newEl
 }

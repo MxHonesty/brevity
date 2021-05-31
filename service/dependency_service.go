@@ -48,7 +48,7 @@ func (srv *DependencyService) GetAllDependencies() []dependency.Dependency {
 	for _, el := range slc {
 		newEl := el.(dependency.Dependency)
 		copyEl := newEl.Copy()  // Make a deep copy.
-		temp = append(temp, copyEl)
+		temp = append(temp, *copyEl)
 	}
 
 	return temp
