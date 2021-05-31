@@ -3,6 +3,7 @@ package service
 import (
 	"brevity/dependency"
 	"brevity/repository"
+	"brevity/task"
 )
 
 // Struct responsible for serving dependency.Dependency
@@ -20,18 +21,35 @@ func NewDependencyService(factory repository.Factory) *DependencyService {
 	return &DependencyService{taskRepo: taskRepo, depRepo: depRepo, currentId: 0}
 }
 
-func (srv *DependencyService) AddDependency() {
-	panic("implement me")
+func (srv *DependencyService) AddDependency(dependentOn task.Scheduable, dependent task.Scheduable) {
+	srv.depRepo.Add(dependency.NewDependency([]task.Scheduable{dependentOn},
+		dependent, srv.currentId))
+
 }
 
 // Remove the Dependency with the given id.
 // Returns true if the dependency was removed.
 // Returns false if no dependency with that id was found.
 func (srv *DependencyService) RemoveDependency(id uint64) bool {
-	panic("implement me")
+	err := srv.depRepo.Remove(id)
+	if err == nil {
+		return true
+	} else {
+		return false
+	}
 }
 
 // Returns a slice of copies of all the dependencies.
 func (srv *DependencyService) GetAllDependencies() []dependency.Dependency {
-	panic("implement me")
+	vec := srv.depRepo.GetAll()
+	slc := vec.Values()  // Slice of values from the vector.
+	temp := make([]dependency.Dependency, 0)  // For copying elements
+
+	for _, el := range slc {
+		newEl := el.(dependency.Dependency)
+		copyEl := newEl.Copy()  // Make a deep copy.
+		temp = append(temp, copyEl)
+	}
+
+	return temp
 }
