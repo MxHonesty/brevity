@@ -178,9 +178,14 @@ func TestRemoveAllDepRepository(t *testing.T) {
 	}
 }
 
-func TestRemoveNotExistingItemDepRepository(t *testing.T) {
+func TestRetrieveRemoveNotExistingItemDepRepository(t *testing.T) {
 	repo := NewDepRepository()
 	err := repo.Remove(0)
+	if err == nil {
+		t.Error("Expected error, got nil")
+	}
+
+	_, err = repo.Retrieve(0)
 	if err == nil {
 		t.Error("Expected error, got nil")
 	}

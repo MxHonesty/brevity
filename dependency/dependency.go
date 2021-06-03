@@ -19,6 +19,8 @@ type Dependency struct {
 // members is represented as such:
 // dependentOn ---> dependent
 // As an order of execution.
+//
+// The items in the slice are copied.
 func NewDependency(dependentOn []task.Scheduable, dependent task.Scheduable,
 	id uint64) Dependency {
 	dependentOnCopy := make([]task.Scheduable, 0)
