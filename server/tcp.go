@@ -5,18 +5,23 @@ import (
 	"fmt"
 	"net"
 	"strconv"
+	"sync"
 )
 
-// TODO: Add a list of current sessions. Add them in the handlerMethod
 // Contains data about the server.
 type Server struct {
 	Port uint64
 	Host string
+	currentSessions []Session  // List of current sessions
+	sessionsMutex *sync.Mutex  // Mutex of modifying sessions data.
+	currentId uint64  // Keeps track of past sessions ids.
 }
 
 // Create a new instance of a tcp server.
 func NewServer(host string, port uint64) *Server {
-	return &Server{Port: port, Host: host}
+	return &Server{Port: port, Host: host,
+		currentSessions: nil, sessionsMutex: &sync.Mutex{},
+		currentId: 0}
 }
 
 // Method for starting the tcp server.
@@ -40,8 +45,46 @@ func (srv *Server) StartServer() {
 	}
 }
 
+// Initialises a new Session.
+// Returns a pointer to the Session.
+func (srv *Server) initSession() *Session {
+	ses := NewSession(srv.currentId)  // Create new session
+	srv.currentId++
+
+	srv.sessionsMutex.Lock()
+	srv.currentSessions = append(srv.currentSessions, *ses)  // Append the item
+	// to the list inside the critical zone.
+	srv.sessionsMutex.Unlock()
+
+	return ses
+}
+
+// Removes the session with the given id.
+// If no item with the given id is found does nothing.
+func (srv *Server) removeSession(id uint64) {
+	srv.sessionsMutex.Lock()
+	// Find the index of the item to remove.
+	index := -1
+	for i, el := range srv.currentSessions {
+		if el.id == id {
+			index = i
+		}
+	}
+	if index != -1 {
+		return
+	}
+
+	srv.currentSessions = append(srv.currentSessions[:index],
+		srv.currentSessions[index+1:]...)  // Remove the found item
+	srv.sessionsMutex.Unlock()
+}
+
 // Handler for a connection.
 func (srv *Server) handleServerConnection(c net.Conn) {
+	session := srv.initSession()  // Initialize the session.
+
+
+	srv.removeSession(session.id)  // Close the session.
 	_ = c.Close()
 }
 
