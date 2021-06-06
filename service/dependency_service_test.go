@@ -7,16 +7,26 @@ import (
 	"time"
 )
 
+func createInMemoryDepRepo() repository.DependencyRepository {
+	factory := repository.NewInMemoryRepositoryFactory()
+	return factory.CreateDependencyRepository()
+}
+
+func createInMemorySchRepo() repository.TaskRepository {
+	factory := repository.NewInMemoryRepositoryFactory()
+	return factory.CreateTaskRepository()
+}
+
 // Test case for making sure the Service is created successfully.
 func TestNewDependencyService(t *testing.T) {
-	srv := NewDependencyService(repository.NewInMemoryRepositoryFactory())
+	srv := NewDependencyService(createInMemoryDepRepo(), createInMemorySchRepo())
 	if srv.currentId != 0 {
 		t.Errorf("Expected currentID of 0, got %d", srv.currentId)
 	}
 }
 
 func TestDependencyService_AddDependency(t *testing.T) {
-	srv := NewDependencyService(repository.NewInMemoryRepositoryFactory())
+	srv := NewDependencyService(createInMemoryDepRepo(), createInMemorySchRepo())
 
 	// Add a few tasks
 	srv.taskRepo.Add(task.NewContainer(0, time.Now(), time.Now()))
@@ -41,7 +51,7 @@ func TestDependencyService_AddDependency(t *testing.T) {
 }
 
 func TestDependencyService_RemoveDependency(t *testing.T) {
-	srv := NewDependencyService(repository.NewInMemoryRepositoryFactory())
+	srv := NewDependencyService(createInMemoryDepRepo(), createInMemorySchRepo())
 
 	// Add a few tasks
 	srv.taskRepo.Add(task.NewContainer(0, time.Now(), time.Now()))
@@ -81,7 +91,7 @@ func TestDependencyService_RemoveDependency(t *testing.T) {
 }
 
 func TestDependencyService_RemoveNotExisting(t *testing.T) {
-	srv := NewDependencyService(repository.NewInMemoryRepositoryFactory())
+	srv := NewDependencyService(createInMemoryDepRepo(), createInMemorySchRepo())
 
 	// Try adding non existing dependent item.
 	err := srv.AddDependency(0, 1, 2 ,3)
@@ -105,7 +115,7 @@ func TestDependencyService_RemoveNotExisting(t *testing.T) {
 }
 
 func TestDependencyService_GetAllDependencies(t *testing.T) {
-	srv := NewDependencyService(repository.NewInMemoryRepositoryFactory())
+	srv := NewDependencyService(createInMemoryDepRepo(), createInMemorySchRepo())
 
 	oldTime := time.Now()
 	newTime := time.Now().Add(10)

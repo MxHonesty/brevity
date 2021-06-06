@@ -6,9 +6,14 @@ import (
 	"time"
 )
 
+func createInMemoryScheduableRepo() repository.TaskRepository {
+	factory := repository.NewInMemoryRepositoryFactory()
+	return factory.CreateTaskRepository()
+}
+
 // Test case for add functionality.
 func TestAddScheduableService(t *testing.T) {
-	srv := NewScheduableService(repository.NewInMemoryRepositoryFactory())
+	srv := NewScheduableService(createInMemoryScheduableRepo())
 	srv.AddContainer(0, time.January, 0, 0, 0,
 		0, time.January, 0, 0, 0)
 
@@ -26,7 +31,7 @@ func TestAddScheduableService(t *testing.T) {
 
 // Test case for remove functionality.
 func TestRemoveScheduableService(t *testing.T) {
-	srv := NewScheduableService(repository.NewInMemoryRepositoryFactory())
+	srv := NewScheduableService(createInMemoryScheduableRepo())
 	srv.AddContainer(0, time.January, 0, 0, 0,
 		0, time.January, 0, 0, 0)
 

@@ -1,5 +1,4 @@
 package repository
-// TODO: Redo tests.
 import (
 	"brevity/dependency"
 	"brevity/task"

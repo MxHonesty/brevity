@@ -3,7 +3,6 @@ package service
 import (
 	"brevity/dependency"
 	"brevity/repository"
-	"brevity/task"
 	"errors"
 	"fmt"
 )
@@ -17,9 +16,8 @@ type DependencyService struct {
 }
 
 // Create a new DependencyService from a repository.Factory.
-func NewDependencyService(factory repository.Factory) *DependencyService {
-	taskRepo := factory.CreateTaskRepository()
-	depRepo := factory.CreateDependencyRepository()
+func NewDependencyService(depRepo repository.DependencyRepository,
+	taskRepo repository.TaskRepository) *DependencyService {
 	return &DependencyService{taskRepo: taskRepo, depRepo: depRepo, currentId: 0}
 }
 
@@ -36,26 +34,28 @@ func NewDependencyService(factory repository.Factory) *DependencyService {
 //		dependentOn are not found. The operation is not done if such error
 // 		occurs. Otherwise returns nil.
 func (srv *DependencyService) AddDependency(dependentId uint64, dependentOnId ...uint64) error {
+	builder := dependency.NewConcreteBuilder()
+
 	// Find dependentId
 	// Find a list of all dependentsOn
 	dependent, err := srv.taskRepo.Retrieve(dependentId)
 	if err != nil {
 		return errors.New("could not find item for dependentId")
+	} else {
+		builder.SetDependent(dependent)
 	}
 
-	var tsk task.Scheduable
-	slc := make([]task.Scheduable, 0)
-	for _, itemId := range dependentOnId {  // Range over ids and add the respective
-		// Tasks inside the slice.
-		tsk, err = srv.taskRepo.Retrieve(itemId)
+	for _, itemId := range dependentOnId {
+		tsk, err := srv.taskRepo.Retrieve(itemId)
 		if err != nil {
 			return errors.New(fmt.Sprintf("could not find item for dependentOnId %d", itemId))
 		} else {
-			slc = append(slc, tsk)
+			builder.AddDependentOn(tsk)
 		}
 	}
 
-	dep := dependency.NewDependency(slc, dependent, srv.currentId)
+
+	dep := builder.GetResult(srv.currentId)
 	srv.currentId++
 	srv.depRepo.Add(dep)
 	return nil

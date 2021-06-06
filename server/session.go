@@ -17,8 +17,16 @@ type Session struct {
 // Create a new session
 func NewSession(id uint64) *Session {
 	factory := repository.NewInMemoryRepositoryFactory()
-	scheduableSrv := service.NewScheduableService(factory)
-	depSrv := service.NewDependencyService(factory)
+	scheduableRepo := factory.CreateTaskRepository()
+	depRepo := factory.CreateDependencyRepository()
+
+	scheduableSrv := service.NewScheduableService(scheduableRepo)
+	depSrv := service.NewDependencyService(depRepo, scheduableRepo)
 
 	return &Session{id: id, depSrv: depSrv, scheduableSrv: scheduableSrv}
+}
+
+// Returns the id of the Session.
+func (s *Session) GetId() uint64 {
+	return s.id
 }
