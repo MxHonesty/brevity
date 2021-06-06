@@ -9,6 +9,7 @@ import (
 )
 
 // Contains data about the server.
+// TODO: Testing for Session management.
 type Server struct {
 	Port uint64
 	Host string
@@ -46,8 +47,8 @@ func (srv *Server) StartServer() {
 }
 
 // Initialises a new Session.
-// Returns a pointer to the Session.
-func (srv *Server) initSession() *Session {
+// Returns the created Session.
+func (srv *Server) initSession() Session {
 	ses := NewSession(srv.currentId)  // Create new session
 	srv.currentId++
 
@@ -56,12 +57,14 @@ func (srv *Server) initSession() *Session {
 	// to the list inside the critical zone.
 	srv.sessionsMutex.Unlock()
 
-	return ses
+	return *ses
 }
 
 // Removes the session with the given id.
 // If no item with the given id is found does nothing.
-func (srv *Server) removeSession(id uint64) {
+// Returns true if the item has been removed.
+// false if the item could not be found.
+func (srv *Server) removeSession(id uint64) bool {
 	srv.sessionsMutex.Lock()
 	// Find the index of the item to remove.
 	index := -1
@@ -70,13 +73,14 @@ func (srv *Server) removeSession(id uint64) {
 			index = i
 		}
 	}
-	if index != -1 {
-		return
+	if index == -1 {
+		return false
 	}
 
 	srv.currentSessions = append(srv.currentSessions[:index],
 		srv.currentSessions[index+1:]...)  // Remove the found item
 	srv.sessionsMutex.Unlock()
+	return true
 }
 
 // Handler for a connection.
