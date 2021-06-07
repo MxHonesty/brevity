@@ -35,7 +35,7 @@ func TestNewServer(t *testing.T) {
 		t.Error("Server did not construct properly.")
 	}
 
-	if len(server.currentSessions) != 0 {
+	if len(server.repo.GetAll()) != 0 {
 		t.Error("Expected session list to be empty")
 	}
 }
@@ -46,7 +46,7 @@ func TestServerInitSession(t *testing.T) {
 	server.initSession()
 	server.initSession()
 
-	size := len(server.currentSessions)
+	size := len(server.repo.GetAll())
 	if size != 3 {
 		t.Errorf("Expected size 3, got %d", size)
 	}
@@ -59,14 +59,14 @@ func TestServerRemoveSession(t *testing.T) {
 	server.initSession()
 
 	server.removeSession(1)
-	size := len(server.currentSessions)
+	size := len(server.repo.GetAll())
 	if size != 2 {
 		t.Errorf("Expected size 2, got %d", size)
 	}
 
 	// Check the correct item was deleted.
-	firstId := server.currentSessions[0].GetId()
-	secondId := server.currentSessions[1].GetId()
+	firstId := server.repo.GetAll()[0].GetId()
+	secondId := server.repo.GetAll()[1].GetId()
 
 	if firstId != 0 {
 		t.Errorf("Expected first element to have id 0, got %d", firstId)

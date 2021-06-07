@@ -12,7 +12,7 @@ import (
 type Server struct {
 	Port uint64
 	Host string
-	currentSessions []Session  // List of current sessions
+	repo ABSSessionsRepository  // Repository for storing Session instances.
 	sessionsMutex *sync.Mutex  // Mutex of modifying sessions data.
 	currentId uint64  // Keeps track of past sessions ids.
 }
@@ -20,7 +20,7 @@ type Server struct {
 // Create a new instance of a tcp server.
 func NewServer(host string, port uint64) *Server {
 	return &Server{Port: port, Host: host,
-		currentSessions: nil, sessionsMutex: &sync.Mutex{},
+		repo: NewSessionsRepository(), sessionsMutex: &sync.Mutex{},
 		currentId: 0}
 }
 
@@ -52,8 +52,7 @@ func (srv *Server) initSession() Session {
 	srv.currentId++
 
 	srv.sessionsMutex.Lock()
-	srv.currentSessions = append(srv.currentSessions, *ses)  // Append the item
-	// to the list inside the critical zone.
+	srv.repo.Add(ses)
 	srv.sessionsMutex.Unlock()
 
 	return *ses
@@ -65,21 +64,9 @@ func (srv *Server) initSession() Session {
 // false if the item could not be found.
 func (srv *Server) removeSession(id uint64) bool {
 	srv.sessionsMutex.Lock()
-	// Find the index of the item to remove.
-	index := -1
-	for i, el := range srv.currentSessions {
-		if el.id == id {
-			index = i
-		}
-	}
-	if index == -1 {
-		return false
-	}
-
-	srv.currentSessions = append(srv.currentSessions[:index],
-		srv.currentSessions[index+1:]...)  // Remove the found item
+	wasRemoved := srv.repo.Remove(id)
 	srv.sessionsMutex.Unlock()
-	return true
+	return wasRemoved
 }
 
 // Handler for a connection.
