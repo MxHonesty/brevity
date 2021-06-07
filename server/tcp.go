@@ -9,8 +9,6 @@ import (
 )
 
 // Contains data about the server.
-// TODO: Testing for Session management.
-// TODO: Create Sessions Repository
 type Server struct {
 	Port uint64
 	Host string
