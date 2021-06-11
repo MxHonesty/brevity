@@ -1,7 +1,9 @@
 // This module implements the commands that the server and the client can use
 // between themselves.
 
-package server
+package command
+
+import "brevity/server"
 
 // Common interface for all Command instances. A command instance stores the
 // necessary data for executing it's action.
@@ -17,6 +19,6 @@ package server
 // More on encoding an interface:
 // https://golang.org/src/encoding/gob/example_interface_test.go
 type Command interface {
-	execute(session *Session)
+	execute(session *server.Session)
 }
 

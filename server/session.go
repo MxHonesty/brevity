@@ -5,16 +5,16 @@ import (
 	"brevity/service"
 )
 
-// TODO: Session builder.
 // Stores session data for the user.
 // A Session stores the services for the current user.
 type Session struct {
 	id uint64  // Session id
-	scheduableSrv *service.ScheduableService
-	depSrv *service.DependencyService
+	scheduableSrv service.AbsScheduableService
+	depSrv service.AbsDependencyService
 }
 
-// Create a new session
+// Create a new session.
+// TODO: Mechanism for using any type of RepositoryFactory
 func NewSession(id uint64) *Session {
 	factory := repository.NewInMemoryRepositoryFactory()
 	scheduableRepo := factory.CreateTaskRepository()
