@@ -1,7 +1,6 @@
 package server
 
 import (
-	"encoding/gob"
 	"fmt"
 	"net"
 	"strconv"
@@ -74,22 +73,5 @@ func (srv *Server) handleServerConnection(c net.Conn) {
 
 
 	srv.removeSession(session.id)  // Close the session.
-	_ = c.Close()
-}
-
-// Client for testing.
-func client() {
-	c, err := net.Dial("tcp", "127.0.0.1:9999")  // Establish Server Connection
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	msg := "Hello, World"
-	fmt.Println("Sending", msg)
-	err = gob.NewEncoder(c).Encode(msg)  // Encode and send the message
-	if err != nil {
-		fmt.Println(err)
-	}
 	_ = c.Close()
 }
