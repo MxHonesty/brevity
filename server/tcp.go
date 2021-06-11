@@ -58,10 +58,9 @@ func (srv *Server) initSession() Session {
 	return *ses
 }
 
-// Removes the session with the given id.
-// If no item with the given id is found does nothing.
-// Returns true if the item has been removed.
-// false if the item could not be found.
+// Removes the session with the given id. If no item with the given id is found
+// does nothing. Returns true if the item has been removed. false if the item
+// could not be found.
 func (srv *Server) removeSession(id uint64) bool {
 	srv.sessionsMutex.Lock()
 	wasRemoved := srv.repo.Remove(id)

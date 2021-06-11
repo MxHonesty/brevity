@@ -34,8 +34,7 @@ func (d *DepRepository) Add(dep dependency.Dependency) {
 	d.elements.Add(copyVal)
 }
 
-// Remove the element with the given id.
-// Returns an error if the item cannot be
+// Remove the element with the given id. Returns an error if the item cannot be
 // found
 func (d *DepRepository) Remove(id uint64) error {
 	index, _ := d.elements.Find(func(index int, value interface{}) bool {
@@ -51,8 +50,7 @@ func (d *DepRepository) Remove(id uint64) error {
 	return nil
 }
 
-// Return true if an item with this id exists
-// in the list.
+// Return true if an item with this id exists in the list.
 func (d *DepRepository) Find(id uint64) bool {
 	index, _ := d.elements.Find(func(index int, value interface{}) bool {
 		corValue := value.(dependency.Dependency)
@@ -77,8 +75,7 @@ func (d *DepRepository) Size() int {
 	return d.elements.Size()
 }
 
-// Update an dependency.Dependency.
-// It DOES NOT update the ID.
+// Update an dependency.Dependency. It DOES NOT update the ID.
 func (d *DepRepository) Update(id uint64, newDep dependency.Dependency) error {
 	index, el := d.elements.Find(func(index int, value interface{}) bool {
 		corValue := value.(dependency.Dependency)
