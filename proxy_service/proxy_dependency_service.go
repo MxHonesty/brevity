@@ -3,7 +3,10 @@
 // form of command.Command instances to the server.
 package proxy_service
 
-import "brevity/dependency"
+import (
+	"brevity/client"
+	"brevity/dependency"
+)
 
 // TODO: implement
 // Every method creates a command.Command instance.
@@ -11,7 +14,7 @@ import "brevity/dependency"
 // and sending the command.Command to the server.
 // TODO: Create CommandSender inside client package.
 type ProxyDependencyService struct {
-	
+	client *client.Client  // Used for sending the commands to the server.
 }
 
 func (p ProxyDependencyService) AddDependency(dependentId uint64, dependentOnId ...uint64) error {

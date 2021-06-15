@@ -9,20 +9,20 @@ import (
 // Also tests that the created Services interact successfully.
 func TestNewSession(t *testing.T) {
 	ses := NewSession(0)
-	ses.scheduableSrv.AddContainer(0, time.January, 0, 0, 0,
+	ses.ScheduableSrv.AddContainer(0, time.January, 0, 0, 0,
 		0, time.January, 0,0,0)
 
-	size := len(ses.scheduableSrv.GetAllContainers())
+	size := len(ses.ScheduableSrv.GetAllContainers())
 	if size != 1 {
 		t.Errorf("Expected to have size 1, got %d", size)
 	}
 
-	err := ses.depSrv.AddDependency(0)
+	err := ses.DepSrv.AddDependency(0)
 	if err != nil {
 		t.Error("Expected to add Dependency Successfully")
 	}
 
-	sizeDep := len(ses.depSrv.GetAllDependencies())
+	sizeDep := len(ses.DepSrv.GetAllDependencies())
 	if sizeDep != 1 {
 		t.Errorf("Expected size 1, got %d", sizeDep)
 	}
