@@ -34,17 +34,21 @@ func (f Factory) RemoveContainer(id uint64) Command {
 }
 
 func (f Factory) GetAllContainers() Command {
-	panic("implement me")
+	com := newGetAllContainersCommand()
+	return com
 }
 
 func (f Factory) AddDependency(dependency dependency.Dependency) Command {
-	panic("implement me")
+	com := newAddDependencyCommand(dependency)
+	return com
 }
 
 func (f Factory) RemoveDependency(id uint64) Command {
-	panic("implement me")
+	com := newRemoveDependencyCommand(id)
+	return com
 }
 
 func (f Factory) GetAllDependency() Command {
-	panic("implement me")
+	com := newGetAllDependencyCommand()
+	return com
 }

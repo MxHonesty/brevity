@@ -4,6 +4,7 @@
 package command
 
 import (
+	"brevity/dependency"
 	"brevity/server"
 	"brevity/task"
 )
@@ -72,7 +73,7 @@ func (com *RemoveContainerCommand) Execute(session *server.Session) {
 type GetAllContainersCommand struct {}
 
 // Create new GetAllContainersCommand.
-func NewGetAllContainersCommand() *GetAllContainersCommand {
+func newGetAllContainersCommand() *GetAllContainersCommand {
 	return &GetAllContainersCommand{}
 }
 
@@ -81,3 +82,53 @@ func (com *GetAllContainersCommand) Execute(session *server.Session) {
 }
 
 
+// Command for Adding a new dependency.Dependency
+type AddDependencyCommand struct {
+	dependency dependency.Dependency
+}
+
+func (com *AddDependencyCommand) Execute(session *server.Session) {
+	dependentOn := com.dependency.DependentOn()
+	var depId []uint64
+	for _, el := range dependentOn {
+		depId = append(depId, el.GetId())
+	}
+
+	err := session.DepSrv.AddDependency(com.dependency.Dependent().GetId(), depId...)
+	if err != nil {
+		panic("proxy unhandled error")
+	}
+}
+
+// Create a new AddDependencyCommand Command.
+func newAddDependencyCommand(dependency dependency.Dependency) *AddDependencyCommand {
+	return &AddDependencyCommand{dependency: dependency}
+}
+
+
+// Command for Removing a dependency.Dependency by id.
+type RemoveDependencyCommand struct {
+	id uint64
+}
+
+// Create a new RemoveDependencyCommand.
+func newRemoveDependencyCommand(id uint64) *RemoveDependencyCommand {
+	return &RemoveDependencyCommand{id: id}
+}
+
+func (com *RemoveDependencyCommand) Execute(session *server.Session) {
+	session.DepSrv.RemoveDependency(com.id)
+}
+
+
+// Command for Getting all dependency.Dependency.
+type GetAllDependencyCommand struct {}
+
+func (com *GetAllDependencyCommand) Execute(session *server.Session) {
+	session.DepSrv.GetAllDependencies()
+}
+
+// Create a new GetAllDependencyCommand.
+func newGetAllDependencyCommand() *GetAllDependencyCommand {
+	return &GetAllDependencyCommand{}
+}
