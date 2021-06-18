@@ -30,3 +30,5 @@ func NewSession(id uint64) *Session {
 func (s *Session) GetId() uint64 {
 	return s.id
 }
+
+// TODO: Public interface for sending a response.Response to client.
