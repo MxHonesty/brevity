@@ -8,6 +8,7 @@ import (
 // Stores session data for the user.
 // A Session stores the services for the current user.
 type Session struct {
+	running 	  bool
 	id            uint64  // Session id
 	ScheduableSrv service.AbsScheduableService
 	DepSrv        service.AbsDependencyService
@@ -23,7 +24,7 @@ func NewSession(id uint64) *Session {
 	scheduableSrv := service.NewScheduableService(scheduableRepo)
 	depSrv := service.NewDependencyService(depRepo, scheduableRepo)
 
-	return &Session{id: id, DepSrv: depSrv, ScheduableSrv: scheduableSrv}
+	return &Session{id: id, DepSrv: depSrv, ScheduableSrv: scheduableSrv, running: true}
 }
 
 // Returns the id of the Session.
@@ -31,4 +32,7 @@ func (s *Session) GetId() uint64 {
 	return s.id
 }
 
-// TODO: Public interface for sending a response.Response to client.
+// Stops the Session.
+func (s *Session) Stop() {
+	s.running = false
+}

@@ -9,7 +9,6 @@ import (
 	"brevity/task"
 )
 
-// TODO: coordinate responses from Execute method.
 // need to implement a system by which the server knows when and how to send a
 // response.
 
@@ -29,6 +28,9 @@ import (
 type Command interface {
 	Execute(session *server.Session)
 }
+
+// TODO: make every Execute return a Response instance.
+// TODO: send that Response instance to the client in the srv.handleServerConnection method
 
 
 // Command for adding a given task.Container into the Repository.
@@ -131,4 +133,14 @@ func (com *GetAllDependencyCommand) Execute(session *server.Session) {
 // Create a new GetAllDependencyCommand.
 func newGetAllDependencyCommand() *GetAllDependencyCommand {
 	return &GetAllDependencyCommand{}
+}
+
+
+// Command that stops the connection.
+type StopCommand struct {
+
+}
+
+func (com *StopCommand) Execute(session *server.Session) {
+	session.Stop()
 }

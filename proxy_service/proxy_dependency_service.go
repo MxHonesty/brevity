@@ -12,7 +12,6 @@ import (
 // Every method creates a command.Command instance.
 // Has a Sender member that is responsible for encoding
 // and sending the command.Command to the server.
-// TODO: Create CommandSender inside client package.
 type ProxyDependencyService struct {
 	client *client.Client  // Used for sending the commands to the server.
 }

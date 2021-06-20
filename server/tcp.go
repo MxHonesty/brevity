@@ -1,6 +1,8 @@
 package server
 
 import (
+	"brevity/command"
+	"encoding/gob"
 	"fmt"
 	"net"
 	"strconv"
@@ -71,6 +73,13 @@ func (srv *Server) removeSession(id uint64) bool {
 func (srv *Server) handleServerConnection(c net.Conn) {
 	session := srv.initSession()  // Initialize the session.
 
+	for session.running {
+		var com command.Command
+		err := gob.NewDecoder(c).Decode(&com)
+		if err == nil {
+			com.Execute(&session)
+		}
+	}
 
 	srv.removeSession(session.id)  // Close the session.
 	_ = c.Close()
