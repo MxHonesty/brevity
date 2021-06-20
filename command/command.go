@@ -22,16 +22,13 @@ import (
 //		that service will be provided as an argument.
 //		In this case we don't know which service will be used
 //		so we provide the whole Session as an argument.
+//		Execute() returns a server.Response instance.
 //
 // More on encoding an interface:
 // https://golang.org/src/encoding/gob/example_interface_test.go
 type Command interface {
-	Execute(session *server.Session)
+	Execute(session *server.Session) server.Response
 }
-
-// TODO: make every Execute return a Response instance.
-// TODO: send that Response instance to the client in the srv.handleServerConnection method
-
 
 // Command for adding a given task.Container into the Repository.
 type AddContainerCommand struct {
@@ -44,13 +41,16 @@ func newAddContainerCommand(container task.Container) *AddContainerCommand {
 }
 
 // Forwards the request to add the task.Container to the service on the server
-func (com *AddContainerCommand) Execute(session *server.Session) {
+// Returns an empty server.Response.
+func (com *AddContainerCommand) Execute(session *server.Session) server.Response {
 	startTime := com.container.GetStartTime()
 	endTime := com.container.GetEndTime()
 
 	session.ScheduableSrv.AddContainer(startTime.Year(), startTime.Month(),
 		startTime.Day(), startTime.Hour(), startTime.Minute(), endTime.Year(),
 		endTime.Month(), endTime.Day(), endTime.Hour(), endTime.Minute())
+
+	return server.Response{}
 }
 
 
@@ -66,8 +66,10 @@ func newRemoveContainerCommand(id uint64) *RemoveContainerCommand {
 }
 
 // Forwards the request to remove a task.Container to the service on the server.
-func (com *RemoveContainerCommand) Execute(session *server.Session) {
-	session.ScheduableSrv.RemoveContainer(com.id)
+// Returns a bool server.Response.
+func (com *RemoveContainerCommand) Execute(session *server.Session) server.Response {
+	removed := session.ScheduableSrv.RemoveContainer(com.id)
+	return server.NewResponse(removed)
 }
 
 
@@ -79,8 +81,11 @@ func newGetAllContainersCommand() *GetAllContainersCommand {
 	return &GetAllContainersCommand{}
 }
 
-func (com *GetAllContainersCommand) Execute(session *server.Session) {
-	session.ScheduableSrv.GetAllContainers()
+// Forwards the request to get all containers.
+// Returns a server.Response with a slice of task.Container.
+func (com *GetAllContainersCommand) Execute(session *server.Session) server.Response {
+	containers := session.ScheduableSrv.GetAllContainers()
+	return server.NewResponse(containers)
 }
 
 
@@ -89,7 +94,8 @@ type AddDependencyCommand struct {
 	dependency dependency.Dependency
 }
 
-func (com *AddDependencyCommand) Execute(session *server.Session) {
+// Returns a server.Response with an error.
+func (com *AddDependencyCommand) Execute(session *server.Session) server.Response {
 	dependentOn := com.dependency.DependentOn()
 	var depId []uint64
 	for _, el := range dependentOn {
@@ -97,9 +103,7 @@ func (com *AddDependencyCommand) Execute(session *server.Session) {
 	}
 
 	err := session.DepSrv.AddDependency(com.dependency.Dependent().GetId(), depId...)
-	if err != nil {
-		panic("proxy unhandled error")
-	}
+	return server.NewResponse(err)
 }
 
 // Create a new AddDependencyCommand Command.
@@ -118,16 +122,21 @@ func newRemoveDependencyCommand(id uint64) *RemoveDependencyCommand {
 	return &RemoveDependencyCommand{id: id}
 }
 
-func (com *RemoveDependencyCommand) Execute(session *server.Session) {
-	session.DepSrv.RemoveDependency(com.id)
+// Returns a bool server.Response.
+func (com *RemoveDependencyCommand) Execute(session *server.Session) server.Response {
+	removed := session.DepSrv.RemoveDependency(com.id)
+	return server.NewResponse(removed)
 }
 
 
 // Command for Getting all dependency.Dependency.
 type GetAllDependencyCommand struct {}
 
-func (com *GetAllDependencyCommand) Execute(session *server.Session) {
-	session.DepSrv.GetAllDependencies()
+
+// Returns a server.Response with a slice of dependency.Dependency.
+func (com *GetAllDependencyCommand) Execute(session *server.Session) server.Response {
+	dependencies := session.DepSrv.GetAllDependencies()
+	return server.NewResponse(dependencies)
 }
 
 // Create a new GetAllDependencyCommand.
@@ -141,6 +150,8 @@ type StopCommand struct {
 
 }
 
-func (com *StopCommand) Execute(session *server.Session) {
+// Forwards request to stop the connection. Returns an empty server.Response.
+func (com *StopCommand) Execute(session *server.Session) server.Response {
 	session.Stop()
+	return server.Response{}
 }

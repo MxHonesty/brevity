@@ -7,3 +7,8 @@ package server
 type Response struct {
 	Data interface{}
 }
+
+// Create a new Response.
+func NewResponse(data interface{}) Response {
+	return Response{Data: data}
+}

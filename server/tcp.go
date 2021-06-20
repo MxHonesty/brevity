@@ -77,7 +77,11 @@ func (srv *Server) handleServerConnection(c net.Conn) {
 		var com command.Command
 		err := gob.NewDecoder(c).Decode(&com)
 		if err == nil {
-			com.Execute(&session)
+			response := com.Execute(&session)
+			encodeErr := gob.NewEncoder(c).Encode(response)
+			if encodeErr != nil {
+				panic("response encoding error")
+			}
 		}
 	}
 
