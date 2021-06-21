@@ -2,6 +2,7 @@ package client
 
 import (
 	"brevity/command"
+	"brevity/server"
 	"encoding/gob"
 	"errors"
 	"net"
@@ -13,6 +14,8 @@ import (
 func registerGobTypes() {
 	//gob.Register()
 }
+
+// TODO: Main client loop, command-request dynamic.
 
 // Struct responsible for forwarding commands to the server.
 type Client struct {
@@ -48,12 +51,22 @@ func (c *Client) Connect() error {
 
 // Sends the command.Command instance to the server using gob encoding. Returns a
 // non-nil error if the send was not completed successfully
-func (c *Client) SendCommand(com command.Command) error {
+func (c *Client) SendCommand(com command.Command) (server.Response, error) {
 	if c.connected {
-		err := gob.NewEncoder(c.connection).Encode(com)
-		return err
+		errSend := gob.NewEncoder(c.connection).Encode(com)
+		if errSend != nil {
+			return server.Response{}, errors.New("could not send command")
+		} else {
+			var data server.Response
+			errReceive := gob.NewDecoder(c.connection).Decode(&data)
+			if errReceive != nil {
+				return server.Response{}, errors.New("decoding error")
+			} else {
+				return data, nil
+			}
+		}
 	}
-	return errors.New("no connection started")
+	return server.Response{}, errors.New("no connection started")
 }
 
 // Method for closing the connection.

@@ -4,24 +4,38 @@
 package proxy_service
 
 import (
+	"brevity/client"
+	"brevity/command"
 	"brevity/task"
 	"time"
 )
 
 // TODO: implement
 type ProxyScheduableService struct {
-	
+	client *client.Client
+	commandFactory command.AbstractCommandFactory
 }
 
+// Add the container.
 func (p ProxyScheduableService) AddContainer(startYear int, startMonth time.Month, startDay, startHour, startMin int,
 	endYear int, endMonth time.Month, endDay, endHour, endMin int) {
-	panic("implement me")
+	startDate := time.Date(startYear, startMonth, startDay, startHour, startMin, 0, 0, time.Local)
+	endDate := time.Date(endYear, endMonth, endDay, endHour, endMin,0 , 0, time.Local)
+
+	com := p.commandFactory.AddContainer(*task.NewContainer(0, startDate, endDate))
+	_, _ = p.client.SendCommand(com)
 }
 
+// Remove a container by id.
 func (p ProxyScheduableService) RemoveContainer(id uint64) bool {
-	panic("implement me")
+	com := p.commandFactory.RemoveContainer(id)
+	resp, _ := p.client.SendCommand(com)
+	return resp.Data.(bool)
 }
 
+// Get a list of all the containers.
 func (p ProxyScheduableService) GetAllContainers() []task.Container {
-	panic("implement me")
+	com := p.commandFactory.GetAllContainers()
+	resp, _ := p.client.SendCommand(com)
+	return resp.Data.([]task.Container)
 }

@@ -1,7 +1,6 @@
 package command
 
 import (
-	"brevity/dependency"
 	"brevity/task"
 )
 
@@ -11,7 +10,7 @@ type AbstractCommandFactory interface {
 	AddContainer(container task.Container) Command
 	RemoveContainer(id uint64) Command
 	GetAllContainers() Command
-	AddDependency(dependency dependency.Dependency) Command
+	AddDependency(dependentId uint64, dependentOnId []uint64) Command
 	RemoveDependency(id uint64) Command
 	GetAllDependency() Command
 	GetStop() Command
@@ -43,8 +42,8 @@ func (f Factory) GetAllContainers() Command {
 }
 
 // Returns a AddDependencyCommand for a given dependency.Dependency.
-func (f Factory) AddDependency(dependency dependency.Dependency) Command {
-	com := newAddDependencyCommand(dependency)
+func (f Factory) AddDependency(dependentId uint64, dependentOnId []uint64) Command {
+	com := newAddDependencyCommand(dependentId, dependentOnId...)
 	return com
 }
 

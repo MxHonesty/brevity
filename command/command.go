@@ -4,7 +4,6 @@
 package command
 
 import (
-	"brevity/dependency"
 	"brevity/server"
 	"brevity/task"
 )
@@ -91,24 +90,19 @@ func (com *GetAllContainersCommand) Execute(session *server.Session) server.Resp
 
 // Command for Adding a new dependency.Dependency
 type AddDependencyCommand struct {
-	dependency dependency.Dependency
+	dependentId uint64
+	dependentOnId []uint64
 }
 
 // Returns a server.Response with an error.
 func (com *AddDependencyCommand) Execute(session *server.Session) server.Response {
-	dependentOn := com.dependency.DependentOn()
-	var depId []uint64
-	for _, el := range dependentOn {
-		depId = append(depId, el.GetId())
-	}
-
-	err := session.DepSrv.AddDependency(com.dependency.Dependent().GetId(), depId...)
+	err := session.DepSrv.AddDependency(com.dependentId, com.dependentOnId...)
 	return server.NewResponse(err)
 }
 
 // Create a new AddDependencyCommand Command.
-func newAddDependencyCommand(dependency dependency.Dependency) *AddDependencyCommand {
-	return &AddDependencyCommand{dependency: dependency}
+func newAddDependencyCommand(dependentId uint64, dependentOnId ...uint64) *AddDependencyCommand {
+	return &AddDependencyCommand{dependentOnId: dependentOnId, dependentId: dependentId}
 }
 
 
