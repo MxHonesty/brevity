@@ -1,7 +1,13 @@
 package main
 
-import "brevity/ui"
+import (
+	"brevity/repository"
+	"brevity/service"
+	"brevity/ui"
+)
 
 func main() {
-	ui.CreateUI()
+	// Next line creates an UI for a local Service that is run over in-memory repositories.
+	currentUI := ui.NewUI(service.NewBasicServiceFactory(repository.NewInMemoryRepositoryFactory()))
+	currentUI.Run()
 }

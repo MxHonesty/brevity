@@ -26,7 +26,7 @@ func NewUI(srvFactory service.AbstractServiceFactory) *UI {
 }
 
 // This method launches the UI.
-func (ui *UI) run() {
+func (ui *UI) Run() {
 	a := app.New()
 	w := a.NewWindow("Hello")
 
