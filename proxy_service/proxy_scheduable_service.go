@@ -10,10 +10,16 @@ import (
 	"time"
 )
 
-// TODO: implement
 type ProxyScheduableService struct {
 	client *client.Client
 	commandFactory command.AbstractCommandFactory
+}
+
+// Create a new instance of ProxyScheduableService. Gets pointer to client.Client
+// as argument.
+func NewProxyScheduableService(client *client.Client) *ProxyScheduableService {
+	return &ProxyScheduableService{client: client,
+		commandFactory: command.Factory{}}
 }
 
 // Add the container.
