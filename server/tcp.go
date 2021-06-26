@@ -2,6 +2,7 @@ package server
 
 import (
 	"brevity/command"
+	"brevity/sessions"
 	"encoding/gob"
 	"fmt"
 	"net"
@@ -11,17 +12,17 @@ import (
 
 // Contains data about the server.
 type Server struct {
-	Port uint64
-	Host string
-	repo ABSSessionsRepository  // Repository for storing Session instances.
-	sessionsMutex *sync.Mutex  // Mutex of modifying sessions data.
-	currentId uint64  // Keeps track of past sessions ids.
+	Port          uint64
+	Host          string
+	repo          sessions.ABSSessionsRepository // Repository for storing Session instances.
+	sessionsMutex *sync.Mutex                    // Mutex of modifying sessions data.
+	currentId     uint64                         // Keeps track of past sessions ids.
 }
 
 // Create a new instance of a tcp server.
 func NewServer(host string, port uint64) *Server {
 	return &Server{Port: port, Host: host,
-		repo: NewSessionsRepository(), sessionsMutex: &sync.Mutex{},
+		repo: sessions.NewSessionsRepository(), sessionsMutex: &sync.Mutex{},
 		currentId: 0}
 }
 
@@ -48,8 +49,8 @@ func (srv *Server) StartServer() {
 
 // Initialises a new Session.
 // Returns the created Session.
-func (srv *Server) initSession() Session {
-	ses := NewSession(srv.currentId)  // Create new session
+func (srv *Server) initSession() sessions.Session {
+	ses := sessions.NewSession(srv.currentId) // Create new session
 	srv.currentId++
 
 	srv.sessionsMutex.Lock()

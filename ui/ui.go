@@ -2,6 +2,7 @@ package ui
 
 import (
 	"brevity/service"
+	"brevity/service_abstract"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/widget"
@@ -14,8 +15,8 @@ import (
 // 	2. Remote Service
 //		Service that communicates with the backend.
 type UI struct {
-	scheduableSrv service.AbsScheduableService
-	depSrv service.AbsDependencyService
+	scheduableSrv service_abstract.AbsScheduableService
+	depSrv        service_abstract.AbsDependencyService
 }
 
 // Create a new instance of UI. Takes as argument a service.AbstractServiceFactory.

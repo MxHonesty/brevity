@@ -1,12 +1,12 @@
-package server
+package sessions
 
 // Abstract Session Repository.
 type ABSSessionsRepository interface {
-	Add(ses *Session)  // Add a Session to repository
-	Remove(id uint64) bool  // Remove an item from the repository.
+	Add(ses *Session)              // Add a Session to repository
+	Remove(id uint64) bool         // Remove an item from the repository.
 	Get(id uint64) (Session, bool) // Get a Session by id.
-	GetAll() []Session  // Return the slice of elements inside the repository.
-	Size() int  // Return the size of the Repository.
+	GetAll() []Session             // Return the slice of elements inside the repository.
+	Size() int                     // Return the size of the Repository.
 }
 
 // In memory implementation of the Session Repository.

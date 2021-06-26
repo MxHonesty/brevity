@@ -2,7 +2,7 @@ package client
 
 import (
 	"brevity/command"
-	"brevity/server"
+	"brevity/response"
 	"encoding/gob"
 	"errors"
 	"net"
@@ -51,22 +51,22 @@ func (c *Client) Connect() error {
 
 // Sends the command.Command instance to the server using gob encoding. Returns a
 // non-nil error if the send was not completed successfully
-func (c *Client) SendCommand(com command.Command) (server.Response, error) {
+func (c *Client) SendCommand(com command.Command) (response.Response, error) {
 	if c.connected {
 		errSend := gob.NewEncoder(c.connection).Encode(com)
 		if errSend != nil {
-			return server.Response{}, errors.New("could not send command")
+			return response.Response{}, errors.New("could not send command")
 		} else {
-			var data server.Response
+			var data response.Response
 			errReceive := gob.NewDecoder(c.connection).Decode(&data)
 			if errReceive != nil {
-				return server.Response{}, errors.New("decoding error")
+				return response.Response{}, errors.New("decoding error")
 			} else {
 				return data, nil
 			}
 		}
 	}
-	return server.Response{}, errors.New("no connection started")
+	return response.Response{}, errors.New("no connection started")
 }
 
 // Method for closing the connection.

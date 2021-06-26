@@ -1,5 +1,6 @@
-// This module defines common interfaces for Service implementations.
-package service
+// This module defines common interfaces for Service implementations. It was
+// created as a pure fabrication to eliminate cyclical imports.
+package service_abstract
 
 import (
 	"brevity/dependency"

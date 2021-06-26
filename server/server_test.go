@@ -1,6 +1,7 @@
 package server
 
 import (
+	"brevity/sessions"
 	"testing"
 	"time"
 )
@@ -8,7 +9,7 @@ import (
 // Test case for creating a new Session.
 // Also tests that the created Services interact successfully.
 func TestNewSession(t *testing.T) {
-	ses := NewSession(0)
+	ses := sessions.NewSession(0)
 	ses.ScheduableSrv.AddContainer(0, time.January, 0, 0, 0,
 		0, time.January, 0,0,0)
 

@@ -1,4 +1,4 @@
-package server
+package response
 
 // A Response type is sent by the server to the client. The data field contains
 // the data that the operation returns. This data will be cast to the appropriate

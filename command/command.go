@@ -4,7 +4,8 @@
 package command
 
 import (
-	"brevity/server"
+	"brevity/response"
+	"brevity/sessions"
 	"brevity/task"
 )
 
@@ -26,7 +27,7 @@ import (
 // More on encoding an interface:
 // https://golang.org/src/encoding/gob/example_interface_test.go
 type Command interface {
-	Execute(session *server.Session) server.Response
+	Execute(session *sessions.Session) response.Response
 }
 
 // Command for adding a given task.Container into the Repository.
@@ -41,7 +42,7 @@ func newAddContainerCommand(container task.Container) *AddContainerCommand {
 
 // Forwards the request to add the task.Container to the service on the server
 // Returns an empty server.Response.
-func (com *AddContainerCommand) Execute(session *server.Session) server.Response {
+func (com *AddContainerCommand) Execute(session *sessions.Session) response.Response {
 	startTime := com.container.GetStartTime()
 	endTime := com.container.GetEndTime()
 
@@ -49,7 +50,7 @@ func (com *AddContainerCommand) Execute(session *server.Session) server.Response
 		startTime.Day(), startTime.Hour(), startTime.Minute(), endTime.Year(),
 		endTime.Month(), endTime.Day(), endTime.Hour(), endTime.Minute())
 
-	return server.Response{}
+	return response.Response{}
 }
 
 
@@ -66,9 +67,9 @@ func newRemoveContainerCommand(id uint64) *RemoveContainerCommand {
 
 // Forwards the request to remove a task.Container to the service on the server.
 // Returns a bool server.Response.
-func (com *RemoveContainerCommand) Execute(session *server.Session) server.Response {
+func (com *RemoveContainerCommand) Execute(session *sessions.Session) response.Response {
 	removed := session.ScheduableSrv.RemoveContainer(com.id)
-	return server.NewResponse(removed)
+	return response.NewResponse(removed)
 }
 
 
@@ -82,9 +83,9 @@ func newGetAllContainersCommand() *GetAllContainersCommand {
 
 // Forwards the request to get all containers.
 // Returns a server.Response with a slice of task.Container.
-func (com *GetAllContainersCommand) Execute(session *server.Session) server.Response {
+func (com *GetAllContainersCommand) Execute(session *sessions.Session) response.Response {
 	containers := session.ScheduableSrv.GetAllContainers()
-	return server.NewResponse(containers)
+	return response.NewResponse(containers)
 }
 
 
@@ -95,9 +96,9 @@ type AddDependencyCommand struct {
 }
 
 // Returns a server.Response with an error.
-func (com *AddDependencyCommand) Execute(session *server.Session) server.Response {
+func (com *AddDependencyCommand) Execute(session *sessions.Session) response.Response {
 	err := session.DepSrv.AddDependency(com.dependentId, com.dependentOnId...)
-	return server.NewResponse(err)
+	return response.NewResponse(err)
 }
 
 // Create a new AddDependencyCommand Command.
@@ -117,9 +118,9 @@ func newRemoveDependencyCommand(id uint64) *RemoveDependencyCommand {
 }
 
 // Returns a bool server.Response.
-func (com *RemoveDependencyCommand) Execute(session *server.Session) server.Response {
+func (com *RemoveDependencyCommand) Execute(session *sessions.Session) response.Response {
 	removed := session.DepSrv.RemoveDependency(com.id)
-	return server.NewResponse(removed)
+	return response.NewResponse(removed)
 }
 
 
@@ -128,9 +129,9 @@ type GetAllDependencyCommand struct {}
 
 
 // Returns a server.Response with a slice of dependency.Dependency.
-func (com *GetAllDependencyCommand) Execute(session *server.Session) server.Response {
+func (com *GetAllDependencyCommand) Execute(session *sessions.Session) response.Response {
 	dependencies := session.DepSrv.GetAllDependencies()
-	return server.NewResponse(dependencies)
+	return response.NewResponse(dependencies)
 }
 
 // Create a new GetAllDependencyCommand.
@@ -145,7 +146,7 @@ type StopCommand struct {
 }
 
 // Forwards request to stop the connection. Returns an empty server.Response.
-func (com *StopCommand) Execute(session *server.Session) server.Response {
+func (com *StopCommand) Execute(session *sessions.Session) response.Response {
 	session.Stop()
-	return server.Response{}
+	return response.Response{}
 }
