@@ -240,7 +240,7 @@ func (c *ConcreteBuilder) AddDependentOn(scheduable task.Scheduable) {
 ```
 
 ### Repository Factory
-The application needs to store events and dependencies between them. Serving this functionality, I created a **Repository**. It is responsible for storing and retrieving items. There a **multiple types** of repositories. There could have an InMemoryRepository, FileRepository, SQLiteRepository, and many more.
+A Repository is responsible for storing and retrieving items. There are **multiple types** of repositories such as InMemoryRepository, FileRepository, SQLiteRepository, and many more.
 Similarly to **how the UI interacted with the logic layer**, the module that uses a Repository does not know what type it's using.
 This crates a problem with creating an instance of repository. A problem that can be solved using the Factory pattern.
 ```go
