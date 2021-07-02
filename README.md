@@ -276,4 +276,5 @@ func (fac *InMemoryRepositoryFactory) CreateDependencyRepository() DependencyRep
 
 External Dependencies
 ---
-The UI has been written using the [Fyne](https://github.com/fyne-io/fyne) ui toolkit.
+* The UI has been written using the [Fyne](https://github.com/fyne-io/fyne) ui toolkit.
+* This project uses data structures from the [GoDS](https://github.com/emirpasic/gods) library.
